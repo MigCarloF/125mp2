@@ -1,7 +1,7 @@
 from manager import run
 
 def main():
-    filename = '.\inputs\process2.txt'
+    filename = '.\inputs\process1.txt'
     run(filename, 'fcfs')
 
 if __name__ == "__main__":
