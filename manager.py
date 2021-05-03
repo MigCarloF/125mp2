@@ -1,4 +1,5 @@
 from process import Process
+from typing import List
 import scheduler
 
 # Handles all process creation and decisions
@@ -12,22 +13,13 @@ def run(filename, scheduling):
         print("First Line must contain Process, Arrival, CPU Burst, Time, and Priority!")
         quit()
 
-    if scheduling == 'fcfs':
-        scheduler.fcfs(initial_processes)
-    elif scheduling == 'sjf':
-        scheduler.sjf(init_processes)
-    elif scheduling == 'priority':
-        scheduler.priority(init_processes)
-    elif scheduling == 'srpt':
-        scheduler.srpt(init_processes)
-    elif scheduling == 'round_robin':
-        scheduler.round_robin(init_processes)
-    else:
-        print("Invalid state")
-
+    finished_processes = handle_scheduling_choice(initial_processes, scheduling)
+    print("\nFinished Processes:\n")
+    for process in finished_processes:
+        process.display()
 
 # Returns list of processes
-def create_processes(filename):
+def create_processes(filename) -> List[Process]:
 
     processes = []
 
@@ -43,7 +35,7 @@ def create_processes(filename):
         # reads a file line by line until line is empty
         while True:
             line = file.readline()
-            data = line.split()
+            data: List[str] = line.split()
             if(len(line) <= 0):
                 break
 
@@ -55,12 +47,32 @@ def create_processes(filename):
 
     return processes
 
-def create_process(data):
+def create_process(data: List[str]) -> Process:
     process_number = int(data[0])
     arrival_time = int(data[1])
     burst_time = int(data[2])
     priority = int(data[3])
     return Process(process_number, arrival_time, burst_time, priority)
+
+# Returns a list of processes processed by a scheduler
+def handle_scheduling_choice(initial_processes: List[Process], scheduling: str) -> List[Process]:    
+    if scheduling == 'fcfs':
+        return scheduler.fcfs(initial_processes)
+
+    if scheduling == 'sjf':
+        return scheduler.sjf(init_processes)
+
+    if scheduling == 'priority':
+        return scheduler.priority(init_processes)
+
+    if scheduling == 'srpt':
+        return scheduler.srpt(init_processes)
+
+    if scheduling == 'round_robin':
+        return scheduler.round_robin(init_processes)
+    else:
+        print("Invalid state")
+        return null
 
 
 class ValueQuantityException(Exception):
