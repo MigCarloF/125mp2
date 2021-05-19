@@ -8,6 +8,7 @@ class Process:
         self.waiting_time = 0
         self.turnaround_time = 0
         self.time_remaining = burst_time
+        self.rr_time_last_checked = 0
 
     def display(self):
         print("Process number: %d\nArrival Time: %d\nBurst Time: %d\nPriority: %d\nWaiting Time: %d\nTurnaround Time: %d\n" %
@@ -17,6 +18,7 @@ class Process:
         if(self.time_remaining < 1):
             raise BurstException
         self.time_remaining -= 1
+        self.rr_time_last_checked += 1
 
     def wait(self):
         self.waiting_time += 1
@@ -26,6 +28,11 @@ class Process:
 
     def finish(self, time_finished):
         self.turnaround_time = time_finished
+
+    def swap_turn(self):
+        self.rr_time_last_checked = 0
+
+    
 
 class BurstException(Exception):
     """Thrown when attempting to burst a process with time_remaining at 0"""

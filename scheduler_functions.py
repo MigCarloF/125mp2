@@ -5,32 +5,64 @@ from process import Process
 
 
 # increments one waiting time for each non active process that has arrived
-def increment_wait(processes):
+def increment_wait(processes: List[Process]):
     for process in processes:
         process.wait()
 
 # transfers initial processes to arrived processes if arrived
 def check_arrived(init_processes, arrived_processes, time_elapsed):
-    appended_processes = []
+
+    # checks each process if arrived. Transfers to arrived list if it did
     for process in init_processes:
         if process.arrival_time == time_elapsed:
             arrived_processes.append(process)
-            appended_processes.append(process)
+            init_processes.remove(process)
 
-    for process in appended_processes:
-        init_processes.remove(process)
 
 # non-pre emptive
-# sets any of the processes as active according to scheduling if there are no active processes
+# sorts all arrived processes
+# sets next process as active according to scheduling if there are no active processes
 # returns active process if there is stil an active process
-def npe_next_process(scheduling: str, active_process, arrived_processes):
+def npe_next_process(scheduling: str, active_process, arrived_processes: List[Process]):
     if(active_process == None and len(arrived_processes) > 0):
-        sorted_processes = sort(arrived_processes, scheduling)
-        return sorted_processes.pop(0)
+        sort(arrived_processes, scheduling)
+        next_process = arrived_processes.pop(0)
+        return next_process
+    return active_process
+
+# srpt only
+# sorts all arrived processes
+# puts active process back in to be sorted
+# sets head of array as next process after sort
+# returns active process if there are no arrived processes
+def srpt_next_process(scheduling: str, active_process: Process, arrived_processes: List[Process]):
+    if(len(arrived_processes) > 0):
+        if active_process != None:
+            arrived_processes.insert(0, active_process)
+        sort(arrived_processes, scheduling)
+        next_process = arrived_processes.pop(0)
+        return next_process
+    return active_process
+
+
+# rr only
+# sets active process if none
+# when time done is  4, adds it to end of list 
+# sets head of list as active
+def rr_next_process(scheduling: str, active_process: Process, arrived_processes: List[Process], time_elapsed):
+    if len(arrived_processes) > 0:
+        if active_process == None:
+            return arrived_processes.pop(0)
+        if active_process.rr_time_last_checked == 4:
+            active_process.swap_turn()
+            swap = active_process
+            active_process = arrived_processes.pop(0)
+            arrived_processes.append(swap)
+            return active_process
     return active_process
 
 # bursts active process while checking for null
-def burst(active_process):
+def burst(active_process: Process):
     if(active_process != None):
             active_process.burst()
 
@@ -44,12 +76,16 @@ def is_process_done(active_process, finished_processes, time_elapsed):
 
 def sort(processes: List[Process], scheduling: str) -> List[Process]:
     if(scheduling == 'fcfs'):
-        return processes
+        # Do nothing
+        pass
     
     if(scheduling == 'sjf'):
-        return sort_sjf(processes)
+        processes.sort(key=lambda x: x.burst_time)
 
-def sort_sjf(processes: List[Process]) -> List[Process]:
-    sorted_processes = []
-    return sorted_processes.sort
+    if(scheduling == 'priority'):
+        processes.sort(key=lambda x: x.priority)
+
+    if(scheduling == 'srpt'):
+        processes.sort(key=lambda x: x.time_remaining)
+
 

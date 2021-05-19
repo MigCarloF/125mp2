@@ -14,13 +14,13 @@ def run(filename, scheduling):
         quit()
 
     finished_processes = handle_scheduling_choice(initial_processes, scheduling)
+    
     print("\nFinished Processes:\n")
     for process in finished_processes:
         process.display()
 
 # Returns list of processes
 def create_processes(filename) -> List[Process]:
-
     processes = []
 
     with open(filename, 'r') as file:
@@ -60,19 +60,19 @@ def handle_scheduling_choice(initial_processes: List[Process], scheduling: str) 
         return scheduler.fcfs(initial_processes)
 
     if scheduling == 'sjf':
-        return scheduler.sjf(init_processes)
+        return scheduler.sjf(initial_processes)
 
     if scheduling == 'priority':
-        return scheduler.priority(init_processes)
+        return scheduler.priority(initial_processes)
 
     if scheduling == 'srpt':
-        return scheduler.srpt(init_processes)
+        return scheduler.srpt(initial_processes)
 
     if scheduling == 'round_robin':
-        return scheduler.round_robin(init_processes)
+        return scheduler.round_robin(initial_processes)
     else:
         print("Invalid state")
-        return null
+        return None
 
 
 class ValueQuantityException(Exception):
