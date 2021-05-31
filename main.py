@@ -1,8 +1,9 @@
 from manager import run
 
 def main():
+    # Enter file text here
     filename = '.\inputs\process5.txt'
-    run(filename, 'round_robin')
+    run(filename)
     test()
 
 def test():

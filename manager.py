@@ -1,9 +1,10 @@
 from process import Process
 from typing import List
+import copy
 import scheduler
 
 # Handles all process creation and decisions
-def run(filename, scheduling):
+def run(filename):
     try:
         initial_processes = create_processes(filename)
     except ValueQuantityException:
@@ -13,11 +14,17 @@ def run(filename, scheduling):
         print("First Line must contain Process, Arrival, CPU Burst, Time, and Priority!")
         quit()
 
-    finished_processes = handle_scheduling_choice(initial_processes, scheduling)
-    
-    print("\nFinished Processes:\n")
-    for process in finished_processes:
-        process.display()
+    fcfs_processes = handle_scheduling_choice(copy.deepcopy(initial_processes), 'fcfs')
+    sjf_processes = handle_scheduling_choice(copy.deepcopy(initial_processes), 'sjf')
+    srpt_processes = handle_scheduling_choice(copy.deepcopy(initial_processes), 'srpt')
+    priority_processes = handle_scheduling_choice(copy.deepcopy(initial_processes), 'priority')
+    round_robin_processes = handle_scheduling_choice(copy.deepcopy(initial_processes), 'round_robin')
+
+    evaluate_processes(fcfs_processes, 'fcfs')
+    evaluate_processes(sjf_processes, 'sjf')
+    evaluate_processes(srpt_processes, 'srpt') 
+    evaluate_processes(priority_processes, 'priority')
+    evaluate_processes(round_robin_processes, 'round_robin')
 
 # Returns list of processes
 def create_processes(filename) -> List[Process]:
@@ -74,6 +81,32 @@ def handle_scheduling_choice(initial_processes: List[Process], scheduling: str) 
         print("Invalid state")
         return None
 
+def evaluate_processes(processes: List[Process], scheduling):
+    averages = average_times(processes)
+
+    print("For %s:" % (scheduling))
+    print("Turnaround Time: %d" % averages[0])
+    print("Average Waiting Time: %d" % averages[1])
+    print()
+
+
+
+
+# returns average turnaround time
+def average_times(processes: List[Process]):
+    average_turnaround_time = 0
+    average_waiting_time = 0
+
+    for process in processes:
+        average_turnaround_time += process.turnaround_time
+
+    for process in processes:
+        average_waiting_time += process.waiting_time
+    
+    average_turnaround_time /= len(processes)
+    average_waiting_time /= len(processes)
+
+    return [average_turnaround_time, average_waiting_time]
 
 class ValueQuantityException(Exception):
     """Raised when the number of values in the file is too small or too large"""

@@ -118,7 +118,6 @@ def srpt(init_processes):
     return finished_processes
 
 def round_robin(init_processes):
-    print("Round Robin")
     time_elapsed = 0
     active_process = None
     total_length = len(init_processes)
@@ -146,5 +145,4 @@ def round_robin(init_processes):
 
         time_elapsed += 1
 
-    print(time_elapsed)
     return finished_processes
